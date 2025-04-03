@@ -14,7 +14,6 @@
 
 main {
   display: flex;
-
 }
 
 .card-container {
@@ -22,7 +21,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: .75rem;
+  gap: 0.75rem;
 }
 
 .card {
@@ -31,16 +30,47 @@ main {
   border: 2px solid #cab512;
   border-radius: 16px;
   position: relative;
+  perspective: 1000px;
+  cursor: pointer;
 }
 
-.card > img {
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out; /* Smooth flip transition */
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg); /* Flip to the back side */
+}
+
+.card-front,
+.card-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-back {
+  transform: rotateY(180deg); /* Hide the back of the card by default */
+}
+
+.card img {
   width: 100%;
   height: 100%;
   border-radius: 14px;
-  object-fit: fill;
+  object-fit: cover;
 }
 
-.card > p {
+.card p {
   color: #fff;
   background-color: rgba(0, 0, 0, 0.5);
   font-size: 2rem;
@@ -63,12 +93,16 @@ main {
   cursor: pointer;
 }
 
-.card > p:hover {
+.card:hover p {
   opacity: 1;
 }
 
 aside {
-  background: linear-gradient(315deg, hsla(53, 97%, 46%, 1) 25%, hsla(203, 99%, 55%, 1) 79%);
+  background: linear-gradient(
+    315deg,
+    hsla(53, 97%, 46%, 1) 25%,
+    hsla(203, 99%, 55%, 1) 79%
+  );
   padding: 1rem;
   border: 2px solid #cab512;
   border-radius: 16px;
@@ -90,6 +124,7 @@ p.instruction {
   margin-bottom: 6rem;
 }
 
-.score, .best-score {
+.score,
+.best-score {
   font-size: 7rem;
 }

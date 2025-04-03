@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import cardBack from '../src/assets/cardBack.jpg'
 import './App.css'
 
 const images = import.meta.glob('../src/assets/cards/*', { eager: true });
@@ -18,12 +19,32 @@ const toTitleCase = (str) => {
   return str.split('_').join(' ');
 };
 
-function Card({ id, imgUrl, label, clickHandler }) {
+function Card({ id, imgUrl, label, clickHandler, flipAll }) {
+  const [flip, setFlip] = useState(false);
+
+  useEffect(() => {
+    if (flipAll) {
+      setFlip(true);  
+      setTimeout(() => {
+        setFlip(false);  
+      }, 600);  
+    }
+  }, [flipAll])
+
   return (
-    <div className='card' onClick={() => clickHandler(id)}>
-      <img src={imgUrl} alt="img" />
-      <p>{label}</p>
-    </div>
+    <div
+      className={`card ${flip ? "flipped" : ""}`}
+      onClick={() => clickHandler(id)}>
+      <div className="card-inner">
+        <div className="card-front">
+          <img src={imgUrl} alt="img" />
+          <p>{label}</p>
+        </div>
+        <div className="card-back">
+          <img src={cardBack} alt="Card Back" />
+        </div>
+      </div>
+    </div >
   );
 }
 
@@ -45,29 +66,31 @@ function App() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [clickedCards, setClickedCards] = useState(new Set());
+  const [flipAll, setFlipAll] = useState(false);
 
   const handleCardClick = (id) => {
     if (clickedCards.has(id)) {
-			setScore(0);
-			setClickedCards(new Set()); 
-		} else {
-			const newClickedCards = new Set(clickedCards);
-			newClickedCards.add(id);
-			setClickedCards(newClickedCards);
-			setScore(prev => {
-				const newScore = prev + 1;
-				setHighScore(high => Math.max(high, newScore));
-				return newScore;
-			});
-		}
+      setScore(0);
+      setClickedCards(new Set());
+    } else {
+      const newClickedCards = new Set(clickedCards);
+      newClickedCards.add(id);
+      setClickedCards(newClickedCards);
+      setScore(prev => {
+        const newScore = prev + 1;
+        setHighScore(high => Math.max(high, newScore));
+        return newScore;
+      });
+    }
 
+    setFlipAll((prev) => !prev);
     setShuffledImages(shuffleArray(shuffledImages));
   };
 
   return (
     <main>
       <SideBar score={score} highScore={highScore} />
-      <section className='card-container'>
+      <section className="card-container">
         {shuffledImages.map(({ id, src }) => {
           const fileName = src.split('/').pop().split('.').shift();
           const titleCaseLabel = toTitleCase(fileName);
@@ -77,12 +100,15 @@ function App() {
               id={id}
               imgUrl={src}
               label={titleCaseLabel}
-              clickHandler={handleCardClick} />
+              clickHandler={handleCardClick}
+              flipAll={flipAll}
+            />
           );
         })}
       </section>
     </main>
-  )
+  );
 }
+
 
 export default App
