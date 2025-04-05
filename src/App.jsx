@@ -23,12 +23,10 @@ function Card({ id, imgUrl, label, clickHandler, flipAll }) {
   const [flip, setFlip] = useState(false);
 
   useEffect(() => {
-    if (flipAll) {
-      setFlip(true);  
-      setTimeout(() => {
-        setFlip(false);  
-      }, 600);  
-    }
+    setFlip(true);
+    setTimeout(() => {
+      setFlip(false);
+    }, 600);
   }, [flipAll])
 
   return (
